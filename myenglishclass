@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grammar Safari: Comparatives &amp; Superlatives Quest</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      min-height: 100vh;
+      color: #0f172a;
+      touch-action: manipulation;
+    }
+
+    .font-fredoka {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+
+    .bounce-in {
+      animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .pulse-glow {
+      animation: pulseGlow 2s infinite;
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.8); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .badge-float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #f59e0b;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between p-3 sm:p-6 overflow-x-hidden select-none">
+
+  <!-- Top Navigation / Scorebar -->
+  <header class="max-w-5xl w-full mx-auto bg-slate-900/80 border-2 border-amber-400/40 rounded-2xl p-4 mb-4 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 shadow-xl">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-2xl text-slate-900 shadow-md">
+        <i class="fa-solid fa-paw"></i>
+      </div>
+      <div>
+        <h1 class="font-fredoka text-xl sm:text-2xl text-amber-400 tracking-wide leading-none">GRAMMAR SAFARI</h1>
+        <p class="text-xs text-slate-300 font-semibold">5th Grade Comparatives &amp; Superlatives</p>
+      </div>
+    </div>
+
+    <!-- HUD Stats -->
+    <div class="flex items-center gap-4 text-white">
+      <div class="flex items-center gap-2 bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-700">
+        <i class="fa-solid fa-star text-amber-400 text-lg"></i>
+        <div>
+          <span class="text-xs text-slate-400 block leading-none">Score</span>
+          <span id="score-display" class="font-fredoka text-lg text-amber-300 leading-none">0</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-700">
+        <i class="fa-solid fa-fire text-orange-500 text-lg"></i>
+        <div>
+          <span class="text-xs text-slate-400 block leading-none">Streak</span>
+          <span id="streak-display" class="font-fredoka text-lg text-orange-400 leading-none">0</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="audio-btn" onclick="toggleAudio()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-400 flex items-center justify-center transition" title="Sound Toggle">
+          <i id="audio-icon" class="fa-solid fa-volume-high"></i>
+        </button>
+        <button onclick="showCheatSheet()" class="w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center shadow-lg transition" title="Grammar Rules Cheat Sheet">
+          <i class="fa-solid fa-book-open"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Container -->
+  <main class="max-w-5xl w-full mx-auto flex-1 flex flex-col justify-center">
+
+    <!-- SCREEN 1: MENU SCREEN -->
+    <div id="screen-menu" class="glass-card rounded-3xl p-6 sm:p-10 text-center shadow-2xl border-4 border-amber-400/50 bounce-in">
+      <div class="badge-float inline-block mb-4">
+        <span class="bg-amber-100 text-amber-800 text-sm font-bold px-4 py-2 rounded-full border-2 border-amber-400 uppercase tracking-wider">
+          <i class="fa-solid fa-trophy mr-2 text-amber-600"></i> Classroom Challenge
+        </span>
+      </div>
+
+      <h2 class="font-fredoka text-4xl sm:text-5xl text-indigo-950 mb-3">
+        Master Comparatives &amp; Superlatives!
+      </h2>
+      <p class="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto mb-8 font-medium">
+        Travel through the Grammar Safari, compare animals, transform words with rules, and earn your Safari Master Badge!
+      </p>
+
+      <!-- Level Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-3xl mx-auto mb-8">
+        
+        <!-- Level 1 Button -->
+        <button onclick="startLevel(1)" class="group bg-gradient-to-b from-sky-400 to-blue-600 hover:from-sky-300 hover:to-blue-500 text-white rounded-2xl p-5 shadow-lg border-b-4 border-blue-800 transition transform hover:-translate-y-1 active:translate-y-0 text-left flex flex-col justify-between h-48">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl mb-3">
+              <i class="fa-solid fa-arrows-left-right"></i>
+            </div>
+            <span class="text-xs uppercase tracking-wider font-extrabold text-sky-100">Level 1</span>
+            <h3 class="font-fredoka text-2xl leading-tight">Sentence Matcher</h3>
+          </div>
+          <p class="text-xs text-sky-100 font-medium opacity-90">Choose <span class="font-bold underline">-er / more</span> or <span class="font-bold underline">-est / most</span>!</p>
+        </button>
+
+        <!-- Level 2 Button -->
+        <button onclick="startLevel(2)" class="group bg-gradient-to-b from-emerald-400 to-teal-600 hover:from-emerald-300 hover:to-teal-500 text-white rounded-2xl p-5 shadow-lg border-b-4 border-teal-800 transition transform hover:-translate-y-1 active:translate-y-0 text-left flex flex-col justify-between h-48">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl mb-3">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <span class="text-xs uppercase tracking-wider font-extrabold text-teal-100">Level 2</span>
+            <h3 class="font-fredoka text-2xl leading-tight">Word Transformer</h3>
+          </div>
+          <p class="text-xs text-teal-100 font-medium opacity-90">Apply Rule 1 to 4 to base adjectives!</p>
+        </button>
+
+        <!-- Level 3 Button -->
+        <button onclick="startLevel(3)" class="group bg-gradient-to-b from-purple-500 to-indigo-700 hover:from-purple-400 hover:to-indigo-600 text-white rounded-2xl p-5 shadow-lg border-b-4 border-indigo-900 transition transform hover:-translate-y-1 active:translate-y-0 text-left flex flex-col justify-between h-48">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl mb-3">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span class="text-xs uppercase tracking-wider font-extrabold text-purple-200">Level 3</span>
+            <h3 class="font-fredoka text-2xl leading-tight">Speed Safari Quiz</h3>
+          </div>
+          <p class="text-xs text-purple-100 font-medium opacity-90">Fast-paced questions to win trophies!</p>
+        </button>
+      </div>
+
+      <button onclick="startLevel(1)" class="pulse-glow bg-amber-500 hover:bg-amber-400 text-slate-900 font-fredoka text-2xl px-10 py-4 rounded-2xl shadow-xl border-b-4 border-amber-700 transition transform active:scale-95">
+        PLAY ALL LEVELS <i class="fa-solid fa-play ml-2"></i>
+      </button>
+    </div>
+
+    <!-- SCREEN 2: GAMEPLAY SCREEN -->
+    <div id="screen-game" class="hidden glass-card rounded-3xl p-5 sm:p-8 shadow-2xl border-4 border-indigo-400/50 flex flex-col gap-6">
+      
+      <!-- Level Progress Header -->
+      <div class="flex items-center justify-between gap-4 border-b pb-4 border-slate-200">
+        <div class="flex items-center gap-3">
+          <button onclick="returnToMenu()" class="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-sm transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Menu
+          </button>
+          <span id="level-badge" class="font-fredoka text-xl text-indigo-700">Level 1: Sentence Matcher</span>
+        </div>
+
+        <div class="flex-1 max-w-xs">
+          <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+            <span>Progress</span>
+            <span id="progress-text">1 / 5</span>
+          </div>
+          <div class="w-full bg-slate-200 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-300">
+            <div id="progress-bar" class="bg-gradient-to-r from-amber-400 to-orange-500 h-full rounded-full transition-all duration-300" style="width: 20%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mascot & Question Prompt Box -->
+      <div class="bg-gradient-to-r from-sky-500 to-indigo-600 rounded-2xl p-5 text-white flex flex-col sm:flex-row items-center gap-5 shadow-inner">
+        <div class="w-20 h-20 rounded-2xl bg-white/20 border-2 border-white/40 flex items-center justify-center text-4xl shrink-0 shadow-lg text-amber-300">
+          <i id="mascot-icon" class="fa-solid fa-hippo"></i>
+        </div>
+        <div class="flex-1 text-center sm:text-left">
+          <span id="rule-tag" class="inline-block bg-amber-400 text-slate-900 text-xs font-extrabold px-3 py-1 rounded-full mb-1 uppercase tracking-wide">
+            Comparing 2 Things
+          </span>
+          <h3 id="question-prompt" class="font-fredoka text-2xl sm:text-3xl leading-snug">
+            A giraffe is _______ than a horse.
+          </h3>
+          <p id="helper-text" class="text-sky-100 text-sm mt-1 font-medium">Base word: <span id="base-word-highlight" class="font-bold underline text-amber-300">tall</span></p>
+        </div>
+      </div>
+
+      <!-- Interactive Answer Options Grid -->
+      <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-2">
+        <!-- Buttons injected dynamically by JS -->
+      </div>
+
+      <!-- Rule Explanation Card (Revealed after answer) -->
+      <div id="explanation-box" class="hidden rounded-2xl p-4 bg-amber-50 border-2 border-amber-300 text-amber-900 flex items-start gap-3 bounce-in">
+        <div class="text-2xl text-amber-600 shrink-0 mt-0.5">
+          <i class="fa-solid fa-lightbulb"></i>
+        </div>
+        <div>
+          <h4 id="explanation-title" class="font-fredoka text-lg text-amber-900">Grammar Rule Tip!</h4>
+          <p id="explanation-text" class="text-sm font-medium text-amber-800">
+            Since we are comparing exactly 2 animals, we add <strong class="underline">-er + than</strong>!
+          </p>
+        </div>
+      </div>
+
+      <!-- Next Button Bar -->
+      <div class="flex justify-end pt-2">
+        <button id="next-btn" onclick="nextQuestion()" class="hidden bg-emerald-500 hover:bg-emerald-400 text-white font-fredoka text-xl px-8 py-3 rounded-2xl shadow-lg border-b-4 border-emerald-700 transition transform active:scale-95">
+          NEXT QUESTION <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: VICTORY / LEVEL COMPLETE SCREEN -->
+    <div id="screen-victory" class="hidden glass-card rounded-3xl p-8 sm:p-12 text-center shadow-2xl border-4 border-amber-400 bounce-in">
+      <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-200 border-4 border-amber-300 flex items-center justify-center text-5xl text-amber-800 mx-auto mb-4 shadow-xl badge-float">
+        <i id="victory-icon" class="fa-solid fa-trophy"></i>
+      </div>
+
+      <h2 id="victory-title" class="font-fredoka text-4xl sm:text-5xl text-indigo-950 mb-2">
+        Safari Hero!
+      </h2>
+      <p id="victory-subtitle" class="text-slate-600 text-lg mb-6 font-semibold">
+        You mastered the comparatives &amp; superlatives challenge!
+      </p>
+
+      <!-- Score Summary Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+        <div class="bg-amber-50 rounded-2xl p-4 border-2 border-amber-200">
+          <span class="text-xs text-amber-700 uppercase font-bold block">Final Score</span>
+          <span id="final-score" class="font-fredoka text-3xl text-amber-600">1200</span>
+        </div>
+        <div class="bg-orange-50 rounded-2xl p-4 border-2 border-orange-200">
+          <span class="text-xs text-orange-700 uppercase font-bold block">Best Streak</span>
+          <span id="final-streak" class="font-fredoka text-3xl text-orange-600">5</span>
+        </div>
+        <div class="col-span-2 sm:col-span-1 bg-indigo-50 rounded-2xl p-4 border-2 border-indigo-200">
+          <span class="text-xs text-indigo-700 uppercase font-bold block">Accuracy</span>
+          <span id="final-accuracy" class="font-fredoka text-3xl text-indigo-600">100%</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap justify-center gap-4">
+        <button onclick="returnToMenu()" class="bg-slate-700 hover:bg-slate-600 text-white font-fredoka text-lg px-6 py-3 rounded-2xl transition">
+          <i class="fa-solid fa-list mr-2"></i> Level Select
+        </button>
+        <button id="next-level-btn" onclick="playNextLevel()" class="pulse-glow bg-amber-500 hover:bg-amber-400 text-slate-900 font-fredoka text-lg px-8 py-3 rounded-2xl border-b-4 border-amber-700 transition">
+          NEXT LEVEL <i class="fa-solid fa-forward ml-2"></i>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer Info -->
+  <footer class="max-w-5xl w-full mx-auto text-center text-xs text-slate-400 py-3 mt-4">
+    Grammar Safari &bull; Designed for 5th Grade Elementary English &bull; Interactive Educational Game
+  </footer>
+
+  <!-- MODAL: Grammar Rules Cheat Sheet (Based on Slides) -->
+  <div id="modal-cheatsheet" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="glass-card max-w-2xl w-full rounded-3xl p-6 sm:p-8 border-4 border-indigo-400 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xl">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <h3 class="font-fredoka text-2xl text-indigo-950">Grammar Golden Rules</h3>
+        </div>
+        <button onclick="hideCheatSheet()" class="w-10 h-10 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold flex items-center justify-center text-xl">
+          &times;
+        </button>
+      </div>
+
+      <!-- Rule Cards Grid -->
+      <div class="space-y-4">
+        
+        <!-- Rule 1 -->
+        <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+          <span class="w-8 h-8 rounded-lg bg-blue-600 text-white font-fredoka font-bold flex items-center justify-center shrink-0">1</span>
+          <div>
+            <h4 class="font-fredoka text-lg text-blue-900">Short Words (1 Syllable)</h4>
+            <p class="text-xs text-slate-600 mb-1">Add <strong>-er</strong> (comparative) or <strong>-est</strong> (superlative).</p>
+            <span class="inline-block bg-blue-200 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-md">Tall &rarr; Taller &rarr; Tallest</span>
+          </div>
+        </div>
+
+        <!-- Rule 2 -->
+        <div class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-4 flex items-start gap-3">
+          <span class="w-8 h-8 rounded-lg bg-rose-600 text-white font-fredoka font-bold flex items-center justify-center shrink-0">2</span>
+          <div>
+            <h4 class="font-fredoka text-lg text-rose-900">Words Ending in "Y"</h4>
+            <p class="text-xs text-slate-600 mb-1">Change <strong>Y</strong> to <strong>I</strong>, then add <strong>-er</strong> or <strong>-est</strong>.</p>
+            <span class="inline-block bg-rose-200 text-rose-800 text-xs font-bold px-2.5 py-1 rounded-md">Happy &rarr; Happier &rarr; Happiest</span>
+          </div>
+        </div>
+
+        <!-- Rule 3 -->
+        <div class="bg-teal-50 border-2 border-teal-200 rounded-2xl p-4 flex items-start gap-3">
+          <span class="w-8 h-8 rounded-lg bg-teal-600 text-white font-fredoka font-bold flex items-center justify-center shrink-0">3</span>
+          <div>
+            <h4 class="font-fredoka text-lg text-teal-900">Long Words (2+ Syllables)</h4>
+            <p class="text-xs text-slate-600 mb-1">Use <strong>MORE</strong> (comparative) or <strong>MOST</strong> (superlative).</p>
+            <span class="inline-block bg-teal-200 text-teal-800 text-xs font-bold px-2.5 py-1 rounded-md">Beautiful &rarr; More Beautiful &rarr; Most Beautiful</span>
+          </div>
+        </div>
+
+        <!-- Rule 4 -->
+        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+          <span class="w-8 h-8 rounded-lg bg-amber-600 text-white font-fredoka font-bold flex items-center justify-center shrink-0">4</span>
+          <div>
+            <h4 class="font-fredoka text-lg text-amber-900">Irregular Special Adjectives</h4>
+            <p class="text-xs text-slate-600 mb-1">Special words that completely change spelling!</p>
+            <div class="flex flex-wrap gap-2 text-xs font-bold">
+              <span class="bg-amber-200 text-amber-900 px-2 py-1 rounded">Good &rarr; Better &rarr; Best</span>
+              <span class="bg-amber-200 text-amber-900 px-2 py-1 rounded">Bad &rarr; Worse &rarr; Worst</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button onclick="hideCheatSheet()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-fredoka text-lg py-3 rounded-2xl shadow-lg transition">
+        Got It, Let's Play!
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* Game State Data */
+    let currentLevel = 1;
+    let questionIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let maxStreak = 0;
+    let correctAnswersCount = 0;
+    let isAudioMuted = false;
+    let soundSynth = null;
+
+    /* Initialize Tone.js audio synth on demand */
+    function initAudio() {
+      if (!soundSynth && window.Tone) {
+        soundSynth = new Tone.Synth().toDestination();
+      }
+    }
+
+    function playSound(type) {
+      if (isAudioMuted || !soundSynth) return;
+      try {
+        Tone.start();
+        const now = Tone.now();
+        if (type === 'correct') {
+          soundSynth.triggerAttackRelease('C5', '8n', now);
+          soundSynth.triggerAttackRelease('E5', '8n', now + 0.1);
+          soundSynth.triggerAttackRelease('G5', '8n', now + 0.2);
+        } else if (type === 'wrong') {
+          soundSynth.triggerAttackRelease('A3', '8n', now);
+          soundSynth.triggerAttackRelease('F3', '8n', now + 0.15);
+        } else if (type === 'victory') {
+          soundSynth.triggerAttackRelease('C5', '8n', now);
+          soundSynth.triggerAttackRelease('E5', '8n', now + 0.12);
+          soundSynth.triggerAttackRelease('G5', '8n', now + 0.24);
+          soundSynth.triggerAttackRelease('C6', '4n', now + 0.36);
+        }
+      } catch (e) {
+        // Fallback gracefully if audio context blocked
+      }
+    }
+
+    function toggleAudio() {
+      isAudioMuted = !isAudioMuted;
+      const icon = document.getElementById('audio-icon');
+      if (isAudioMuted) {
+        icon.className = 'fa-solid fa-volume-xmark text-slate-400';
+      } else {
+        icon.className = 'fa-solid fa-volume-high text-amber-400';
+        initAudio();
+      }
+    }
+
+    const levelDatasets = {
+      1: [
+        {
+          mascot: 'fa-hippo',
+          prompt: 'A giraffe is __________ than a horse.',
+          baseWord: 'tall',
+          type: 'Comparative (2 items)',
+          rule: 'Rule 1: Short word (add -er)',
+          options: ['taller', 'tallest', 'more tall', 'most tall'],
+          correct: 0,
+          explanation: 'Comparing exactly 2 animals (giraffe & horse) using a short 1-syllable word: add "-er"!'
+        },
+        {
+          mascot: 'fa-crow',
+          prompt: 'The cheetah is the __________ land animal!',
+          baseWord: 'fast',
+          type: 'Superlative (3+ items)',
+          rule: 'Rule 1: Short word champion (add -est)',
+          options: ['faster', 'the fastest', 'fastest', 'more fast'],
+          correct: 2,
+          explanation: 'Comparing the cheetah to ALL land animals: use "the" + "-est"!'
+        },
+        {
+          mascot: 'fa-dog',
+          prompt: 'My puppy is __________ than a cat!',
+          baseWord: 'happy',
+          type: 'Comparative (2 items)',
+          rule: 'Rule 2: Ends in Y (Change Y to I + er)',
+          options: ['happyer', 'happier', 'more happy', 'happiest'],
+          correct: 1,
+          explanation: '"Happy" ends in Y! Drop the Y and add "-ier" to compare 2 animals.'
+        },
+        {
+          mascot: 'fa-butterfly',
+          prompt: 'This butterfly is __________ than that moth.',
+          baseWord: 'beautiful',
+          type: 'Comparative (2 items)',
+          rule: 'Rule 3: Long word (use MORE)',
+          options: ['beautifuller', 'more beautiful', 'most beautiful', 'beautifulest'],
+          correct: 1,
+          explanation: '"Beautiful" has 3 syllables (long word)! Use "MORE" before the adjective.'
+        },
+        {
+          mascot: 'fa-trophy',
+          prompt: 'Our team gave the __________ performance today!',
+          baseWord: 'good',
+          type: 'Superlative (3+ items)',
+          rule: 'Rule 4: Irregular Adjective',
+          options: ['goodest', 'better', 'best', 'more good'],
+          correct: 2,
+          explanation: '"Good" is irregular! Good → Better → Best (number 1 champion).'
+        }
+      ],
+      2: [
+        {
+          mascot: 'fa-wand-magic-sparkles',
+          prompt: 'Transform "HEAVY" into a comparative adjective (2 things):',
+          baseWord: 'heavy',
+          type: 'Rule 2 Transformation',
+          rule: 'Ends in Y',
+          options: ['heavier', 'heavyer', 'more heavy', 'heaviest'],
+          correct: 0,
+          explanation: 'Heavy ends in Y. Change Y to I and add -er: "Heavier".'
+        },
+        {
+          mascot: 'fa-shield-cat',
+          prompt: 'Transform "BAD" into a superlative adjective (#1 worst):',
+          baseWord: 'bad',
+          type: 'Rule 4 Transformation',
+          rule: 'Irregular Word',
+          options: ['baddest', 'worse', 'worst', 'more bad'],
+          correct: 2,
+          explanation: 'Bad is an irregular adjective: Bad → Worse → Worst.'
+        },
+        {
+          mascot: 'fa-feather',
+          prompt: 'Transform "SMALL" into a superlative adjective:',
+          baseWord: 'small',
+          type: 'Rule 1 Transformation',
+          rule: '1 Syllable Short Word',
+          options: ['smaller', 'smallest', 'more small', 'most small'],
+          correct: 1,
+          explanation: 'Small is 1 syllable! Superlative form adds -est: "Smallest".'
+        },
+        {
+          mascot: 'fa-dragon',
+          prompt: 'Transform "DANGEROUS" into a comparative adjective:',
+          baseWord: 'dangerous',
+          type: 'Rule 3 Transformation',
+          rule: '3 Syllable Long Word',
+          options: ['dangerouser', 'more dangerous', 'most dangerous', 'dangerousest'],
+          correct: 1,
+          explanation: 'Long words (2+ syllables) require "MORE" for comparative forms.'
+        },
+        {
+          mascot: 'fa-smile-beam',
+          prompt: 'Transform "FUNNY" into a superlative adjective:',
+          baseWord: 'funny',
+          type: 'Rule 2 Transformation',
+          rule: 'Ends in Y',
+          options: ['funnier', 'funniest', 'funnyest', 'most funny'],
+          correct: 1,
+          explanation: 'Change Y to I and add -est for superlative: "Funniest".'
+        }
+      ],
+      3: [
+        {
+          mascot: 'fa-bolt',
+          prompt: 'An elephant is __________ than a dog.',
+          baseWord: 'big',
+          type: 'Speed Quiz',
+          rule: 'Double Consonant + er',
+          options: ['biger', 'bigger', 'biggest', 'more big'],
+          correct: 1,
+          explanation: 'Big → Bigger! Double the "g" and add "-er".'
+        },
+        {
+          mascot: 'fa-mountain',
+          prompt: 'Mount Everest is the __________ mountain in the world.',
+          baseWord: 'high',
+          type: 'Speed Quiz',
+          rule: 'Superlative',
+          options: ['higher', 'highest', 'more high', 'most high'],
+          correct: 1,
+          explanation: 'Comparing Everest to all mountains: "highest".'
+        },
+        {
+          mascot: 'fa-puzzle-piece',
+          prompt: 'This grammar riddle is __________ than the last one.',
+          baseWord: 'hard',
+          type: 'Speed Quiz',
+          rule: 'Comparative',
+          options: ['harder', 'hardest', 'more hard', 'hardly'],
+          correct: 0,
+          explanation: 'Comparing two riddles: "harder".'
+        },
+        {
+          mascot: 'fa-gem',
+          prompt: 'Diamonds are the __________ gems of all.',
+          baseWord: 'valuable',
+          type: 'Speed Quiz',
+          rule: 'Long Word Superlative',
+          options: ['valuabler', 'more valuable', 'most valuable', 'valuablest'],
+          correct: 2,
+          explanation: '"Valuable" is a long word. Use "most valuable" for superlative.'
+        },
+        {
+          mascot: 'fa-compass',
+          prompt: 'The North Pole is __________ than Florida.',
+          baseWord: 'far',
+          type: 'Speed Quiz',
+          rule: 'Irregular Distance',
+          options: ['farer', 'farther', 'farthest', 'more far'],
+          correct: 1,
+          explanation: 'Far → Farther (or Further) for comparative distance.'
+        }
+      ]
+    };
+
+    function startLevel(levelNum) {
+      initAudio();
+      currentLevel = levelNum;
+      questionIndex = 0;
+      correctAnswersCount = 0;
+      
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-victory').classList.add('hidden');
+      document.getElementById('screen-game').classList.remove('hidden');
+
+      const levelTitles = {
+        1: 'Level 1: Sentence Matcher',
+        2: 'Level 2: Word Transformer',
+        3: 'Level 3: Speed Safari Quiz'
+      };
+      document.getElementById('level-badge').textContent = levelTitles[levelNum];
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const dataset = levelDatasets[currentLevel];
+      const q = dataset[questionIndex];
+
+      // Update Header progress
+      document.getElementById('progress-text').textContent = `${questionIndex + 1} / ${dataset.length}`;
+      const pct = ((questionIndex + 1) / dataset.length) * 100;
+      document.getElementById('progress-bar').style.width = `${pct}%`;
+
+      // Update Mascot & Prompt
+      document.getElementById('mascot-icon').className = `fa-solid ${q.mascot}`;
+      document.getElementById('rule-tag').textContent = q.type;
+      document.getElementById('question-prompt').textContent = q.prompt;
+      document.getElementById('base-word-highlight').textContent = q.baseWord;
+
+      // Hide Explanation & Next button
+      document.getElementById('explanation-box').classList.add('hidden');
+      document.getElementById('next-btn').classList.add('hidden');
+
+      // Build Interactive Option Buttons
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `option-btn w-full bg-white hover:bg-sky-50 border-3 border-slate-200 text-slate-800 font-fredoka text-xl py-4 px-6 rounded-2xl shadow-md transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-between text-left`;
+        btn.innerHTML = `
+          <span>${optText}</span>
+          <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm text-slate-400 group-hover:bg-amber-400 group-hover:text-slate-900 font-bold">${String.fromCharCode(65 + idx)}</span>
+        `;
+        btn.onclick = () => selectOption(idx);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIndex) {
+      const dataset = levelDatasets[currentLevel];
+      const q = dataset[questionIndex];
+      const buttons = document.querySelectorAll('.option-btn');
+
+      // Disable all buttons after choice
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (selectedIndex === q.correct) {
+        // Correct Answer
+        playSound('correct');
+        score += 100 + (streak * 20);
+        streak += 1;
+        if (streak > maxStreak) maxStreak = streak;
+        correctAnswersCount += 1;
+
+        buttons[selectedIndex].className = 'w-full bg-emerald-500 text-white font-fredoka text-xl py-4 px-6 rounded-2xl shadow-lg border-b-4 border-emerald-700 flex items-center justify-between text-left bounce-in';
+        buttons[selectedIndex].innerHTML += ` <i class="fa-solid fa-circle-check text-2xl"></i>`;
+
+        // Confetti burst on streak
+        if (streak >= 3 && window.confetti) {
+          confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+        }
+      } else {
+        // Incorrect Answer
+        playSound('wrong');
+        streak = 0;
+
+        buttons[selectedIndex].className = 'w-full bg-rose-500 text-white font-fredoka text-xl py-4 px-6 rounded-2xl shadow-lg border-b-4 border-rose-700 flex items-center justify-between text-left shake';
+        buttons[selectedIndex].innerHTML += ` <i class="fa-solid fa-circle-xmark text-2xl"></i>`;
+
+        // Highlight correct option
+        buttons[q.correct].className = 'w-full bg-emerald-100 border-2 border-emerald-500 text-emerald-900 font-fredoka text-xl py-4 px-6 rounded-2xl flex items-center justify-between text-left';
+      }
+
+      // Update HUD
+      document.getElementById('score-display').textContent = score;
+      document.getElementById('streak-display').textContent = streak;
+
+      // Show Explanation Tip
+      document.getElementById('explanation-text').textContent = q.explanation;
+      document.getElementById('explanation-box').classList.remove('hidden');
+
+      // Show Next Button
+      document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      const dataset = levelDatasets[currentLevel];
+      questionIndex++;
+
+      if (questionIndex < dataset.length) {
+        loadQuestion();
+      } else {
+        showLevelVictory();
+      }
+    }
+
+    function showLevelVictory() {
+      playSound('victory');
+      if (window.confetti) {
+        confetti({ particleCount: 100, spread: 100, origin: { y: 0.5 } });
+      }
+
+      document.getElementById('screen-game').classList.add('hidden');
+      document.getElementById('screen-victory').classList.remove('hidden');
+
+      const dataset = levelDatasets[currentLevel];
+      const accuracy = Math.round((correctAnswersCount / dataset.length) * 100);
+
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('final-streak').textContent = maxStreak;
+      document.getElementById('final-accuracy').textContent = `${accuracy}%`;
+
+      const nextBtn = document.getElementById('next-level-btn');
+      if (currentLevel < 3) {
+        nextBtn.classList.remove('hidden');
+      } else {
+        nextBtn.classList.add('hidden');
+      }
+    }
+
+    function playNextLevel() {
+      if (currentLevel < 3) {
+        startLevel(currentLevel + 1);
+      } else {
+        returnToMenu();
+      }
+    }
+
+    function returnToMenu() {
+      document.getElementById('screen-game').classList.add('hidden');
+      document.getElementById('screen-victory').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    function showCheatSheet() {
+      document.getElementById('modal-cheatsheet').classList.remove('hidden');
+    }
+
+    function hideCheatSheet() {
+      document.getElementById('modal-cheatsheet').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
